@@ -338,10 +338,10 @@ class MushroomTreeAPIView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-model_path = os.path.join(settings.BASE_DIR, 'pkl/model (5).pkl')
+model_path = os.path.join(settings.BASE_DIR, 'pkl/model (8).pkl')
 model_5 = joblib.load(model_path)
 
-scaler_path = os.path.join(settings.BASE_DIR, 'pkl/scaler (5).pkl')
+scaler_path = os.path.join(settings.BASE_DIR, 'pkl/scaler (8).pkl')
 scaler_5 = joblib.load(scaler_path)
 
 color_list = ['dark green', 'green', 'purple']
@@ -512,4 +512,88 @@ class StudentsAPIView(views.APIView):
             predict = model_4.predict(scaled_data)[0]
             student = serializer.save(predict=predict)
             return Response({'data': StudentsSerializer(student).data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+model_path = os.path.join(settings.BASE_DIR, 'models/model (5).pkl')
+model = joblib.load(model_path)
+
+scaler_path = os.path.join(settings.BASE_DIR, 'models/scaler (5).pkl')
+scaler = joblib.load(scaler_path)
+
+job_role_list = [
+    'Human Resources', 'Laboratory Technician', 'Manager',
+    'Manufacturing Director', 'Research Director', 'Research Scientist',
+    'Sales Executive', 'Sales Representative'
+]
+
+business_travel_list = ['Travel_Frequently', 'Travel_Rarely']
+department_list = ['Research & Development', 'Sales']
+education_field_list = ['Life Sciences', 'Marketing', 'Medical', 'Other', 'Technical Degree']
+marital_list = ['Married', 'Single']
+
+def build_features_hr(data):
+    numeric = [
+        data['Age'],
+        data['DailyRate'],
+        data['DistanceFromHome'],
+        data['Education'],
+        data['EnvironmentSatisfaction'],
+        data['HourlyRate'],
+        data['JobInvolvement'],
+        data['JobLevel'],
+        data['JobSatisfaction'],
+        data['MonthlyIncome'],
+        data['MonthlyRate'],
+        data['NumCompaniesWorked'],
+        data['PercentSalaryHike'],
+        data['PerformanceRating'],
+        data['RelationshipSatisfaction'],
+        data['StockOptionLevel'],
+        data['TotalWorkingYears'],
+        data['TrainingTimesLastYear'],
+        data['WorkLifeBalance'],
+        data['YearsAtCompany'],
+        data['YearsInCurrentRole'],
+        data['YearsSinceLastPromotion'],
+        data['YearsWithCurrManager'],
+    ]
+
+    overtime = [1 if data['OverTime'] == 'Yes' else 0]
+    job_role = [1 if data['JobRole'] == r else 0 for r in job_role_list]
+    business_travel = [1 if data['BusinessTravel'] == bt else 0 for bt in business_travel_list]
+    department = [1 if data['Department'] == d else 0 for d in department_list]
+    education_field = [1 if data['EducationField'] == ef else 0 for ef in education_list]
+    gender = [1 if data['Gender'] == 'male' else 0]
+    marital_status = [1 if data['MaritalStatus'] == ms else 0 for ms in marital_list]
+
+    return (
+        numeric +
+        overtime +
+        job_role +
+        business_travel +
+        department +
+        education_field +
+        gender +
+        marital_status
+    )
+
+class HrPredictAPIView(views.APIView):
+
+    def post(self, request):
+        serializer = HrSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+
+            features = build_features(data)
+            scaled = scaler.transform([features])
+
+            pred = model.predict(scaled)[0]
+            prob = model.predict_proba(scaled)[0][1]
+
+            return Response({
+                'attrition': bool(pred),
+                'probability': round(float(prob), 2)
+            }, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -66,3 +66,8 @@ class HouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = '__all__'
+
+class HrSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hr
+        fields = '__all__'
