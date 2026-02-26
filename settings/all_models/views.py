@@ -115,7 +115,7 @@ class DiabetesAPIView(views.APIView):
             prob = model_3.predict_proba(scaled_data)[0][1]
 
             diabetes_data = serializer.save(
-                predict=bool(predict),
+                diabetes=bool(predict),
                 probability=float(prob)
             )
 

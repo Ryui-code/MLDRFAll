@@ -118,11 +118,11 @@ class Diabetes(models.Model):
     BMI = models.FloatField()
     DiabetesPedigreeFunction = models.FloatField()
     Age = models.IntegerField()
-    predict = models.BooleanField(null=True, blank=True)
+    diabetes = models.BooleanField(null=True, blank=True)
     probability = models.FloatField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.predict}%'
+        return f'{self.diabetes}%'
 
 class House(models.Model):
     GrLivArea = models.IntegerField()
