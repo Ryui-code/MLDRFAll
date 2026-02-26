@@ -17,5 +17,6 @@ urlpatterns = [
     path('mushrooms-tree/', MushroomTreeAPIView.as_view(), name='mushrooms-tree'),
     path('mushrooms-logistic/', MushroomLogisticAPIView.as_view(), name='mushrooms-log'),
     path('telecom/', TelecomAPIView.as_view(), name='telecom-model'),
+    path('hr/', HrAPIView.as_view(), name='hr-model'),
     path('', include(router.urls))
 ]

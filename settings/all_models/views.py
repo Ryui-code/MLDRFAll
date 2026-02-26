@@ -515,10 +515,10 @@ class StudentsAPIView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-model_path = os.path.join(settings.BASE_DIR, 'models/model (5).pkl')
+model_path = os.path.join(settings.BASE_DIR, 'pkl/model (5).pkl')
 model = joblib.load(model_path)
 
-scaler_path = os.path.join(settings.BASE_DIR, 'models/scaler (5).pkl')
+scaler_path = os.path.join(settings.BASE_DIR, 'pkl/scaler (5).pkl')
 scaler = joblib.load(scaler_path)
 
 job_role_list = [
@@ -563,7 +563,7 @@ def build_features_hr(data):
     job_role = [1 if data['JobRole'] == r else 0 for r in job_role_list]
     business_travel = [1 if data['BusinessTravel'] == bt else 0 for bt in business_travel_list]
     department = [1 if data['Department'] == d else 0 for d in department_list]
-    education_field = [1 if data['EducationField'] == ef else 0 for ef in education_list]
+    education_field = [1 if data['EducationField'] == ef else 0 for ef in education_field_list]
     gender = [1 if data['Gender'] == 'male' else 0]
     marital_status = [1 if data['MaritalStatus'] == ms else 0 for ms in marital_list]
 
@@ -578,22 +578,27 @@ def build_features_hr(data):
         marital_status
     )
 
-class HrPredictAPIView(views.APIView):
+class HrAPIView(views.APIView):
 
     def post(self, request):
         serializer = HrSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
 
-            features = build_features(data)
+            features = build_features_hr(data)
             scaled = scaler.transform([features])
 
             pred = model.predict(scaled)[0]
             prob = model.predict_proba(scaled)[0][1]
 
-            return Response({
-                'attrition': bool(pred),
-                'probability': round(float(prob), 2)
-            }, status=status.HTTP_200_OK)
+            hr_data = serializer.save(
+                attrition=bool(pred),
+                probability=round(float(prob), 2)
+            )
+
+            return Response(
+                {'data': HrSerializer(hr_data).data},
+                status=status.HTTP_200_OK
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
