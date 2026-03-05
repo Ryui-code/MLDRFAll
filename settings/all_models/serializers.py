@@ -76,3 +76,8 @@ class TitanicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Titanic
         fields = '__all__'
+
+class MobileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mobile
+        fields = '__all__'

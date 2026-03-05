@@ -183,3 +183,18 @@ class Titanic(models.Model):
 
     def __str__(self):
         return f'{self.survived}'
+
+class Mobile(models.Model):
+    Rating = models.IntegerField()
+    Num_Ratings = models.IntegerField()
+    RAM = models.IntegerField()
+    ROM = models.IntegerField()
+    Back_Cam = models.IntegerField()
+    Front_Cam = models.IntegerField()
+    Battery = models.IntegerField()
+    Processor = models.CharField(max_length=500)
+    Scrap_Date = models.CharField(max_length=500)
+    predicted_price = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.predicted_price}'
