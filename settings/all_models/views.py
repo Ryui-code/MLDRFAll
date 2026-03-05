@@ -8,6 +8,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from ..frontend.front import previous_loan_defaults_on_file
+
+
 class RegisterView(GenericAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
@@ -337,7 +340,6 @@ class MushroomTreeAPIView(views.APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 model_path = os.path.join(settings.BASE_DIR, 'pkl/model (8).pkl')
 model_5 = joblib.load(model_path)
 
@@ -601,4 +603,48 @@ class HrAPIView(views.APIView):
                 status=status.HTTP_200_OK
             )
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+model_path = os.path.join(settings.BASE_DIR, 'pkl/linear_model.pkl')
+linear_model = joblib.load(model_path)
+
+scaler_path = os.path.join(settings.BASE_DIR, 'pkl/scaler (10).pkl')
+scaler_10 = joblib.load(scaler_path)
+
+embarked_list = ['Q', 'S']
+
+def build_features_titanic(data):
+    numeric = [
+        data['Age'],
+        data['SibSp'],
+        data['Parch'],
+        data['Pclass']
+    ]
+
+    sex = [1 if data['Sex'] == 'male' else 0]
+    embarked = [1 if data['Embarked'] == i else 0 for i in embarked_list]
+
+    return numeric + sex + embarked
+
+class TitanicAPIView(views.APIView):
+
+    def post(self, request):
+        serializer = TitanicSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+
+            features = build_features(data)
+            scaled_data = scaler_10.transform([features])
+
+            pred = linear_model.predict(scaled_data)[0]
+
+            titanic_data = serializer.save(
+                survived=bool(pred)
+            )
+
+            return Response(
+                {'data': TitanicSerializer(titanic_data).data},
+                status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -71,3 +71,8 @@ class HrSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hr
         fields = '__all__'
+
+class TitanicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Titanic
+        fields = '__all__'

@@ -170,3 +170,15 @@ class Hr(models.Model):
 
     def __str__(self):
         return f"HR Record #{self.id} — Attrition: {self.attrition}"
+
+class Titanic(models.Model):
+    Pclass = models.IntegerField()
+    Sex = models.CharField(max_length=64)
+    Age = models.IntegerField()
+    SibSp = models.IntegerField()
+    Parch = models.IntegerField()
+    Embarked = models.CharField(max_length=64)
+    survived = models.BooleanField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.survived}'
