@@ -624,6 +624,7 @@ def build_features_titanic(data):
 
     return numeric + embarked + sex
 
+
 class TitanicAPIView(views.APIView):
 
     def post(self, request):
