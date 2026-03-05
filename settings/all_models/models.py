@@ -179,6 +179,7 @@ class Titanic(models.Model):
     Parch = models.IntegerField()
     Embarked = models.CharField(max_length=64)
     survived = models.BooleanField(null=True, blank=True)
+    probability = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.survived}'

@@ -603,26 +603,26 @@ class HrAPIView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-model_path = os.path.join(settings.BASE_DIR, 'pkl/linear_model.pkl')
+model_path = os.path.join(settings.BASE_DIR, 'pkl/model (9).pkl')
 linear_model = joblib.load(model_path)
 
-scaler_path = os.path.join(settings.BASE_DIR, 'pkl/scaler (10).pkl')
+scaler_path = os.path.join(settings.BASE_DIR, 'pkl/scaler (9).pkl')
 scaler_10 = joblib.load(scaler_path)
 
 embarked_list = ['Q', 'S']
 
 def build_features_titanic(data):
     numeric = [
+        data['Pclass'],
         data['Age'],
         data['SibSp'],
-        data['Parch'],
-        data['Pclass']
+        data['Parch']
     ]
 
     sex = [1 if data['Sex'] == 'male' else 0]
     embarked = [1 if data['Embarked'] == i else 0 for i in embarked_list]
 
-    return numeric + sex + embarked
+    return numeric + embarked + sex
 
 class TitanicAPIView(views.APIView):
 
@@ -631,13 +631,15 @@ class TitanicAPIView(views.APIView):
         if serializer.is_valid():
             data = serializer.validated_data
 
-            features = build_features(data)
+            features = build_features_titanic(data)
             scaled_data = scaler_10.transform([features])
 
             pred = linear_model.predict(scaled_data)[0]
+            prob = linear_model.predict_proba(scaled_data)[0][1]
 
             titanic_data = serializer.save(
-                survived=bool(pred)
+                survived=bool(pred),
+                probability=float(prob)
             )
 
             return Response(
