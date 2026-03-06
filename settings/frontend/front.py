@@ -381,18 +381,47 @@ if model == 'Telecom':
 
 if model == 'Mobile':
 
-    api = 'http://127.0.0.1:8000/mobile-model/'
+    api = 'http://127.0.0.1:8000/mobile-predict/'
 
     st.title('Mobile Price Prediction')
 
-    Rating = st.number_input('Rating', min_value=0.0, step=0.1)
-    Num_Ratings = st.number_input('Number of Ratings', min_value=0.0, step=100.0)
-    RAM = st.number_input('RAM (GB)', min_value=0.0, step=1.0)
-    ROM = st.number_input('ROM (GB)', min_value=0.0, step=1.0)
-    Back_Cam = st.number_input('Back Camera (MP)', min_value=0.0, step=1.0)
-    Front_Cam = st.number_input('Front Camera (MP)', min_value=0.0, step=1.0)
-    Battery = st.number_input('Battery (mAh)', min_value=0.0, step=100.0)
-    Processor = st.number_input('Processor', min_value=0.0)
+    Rating = st.number_input('Rating', min_value=0, step=1)
+    Num_Ratings = st.number_input('Number of Ratings', min_value=0, step=1)
+    RAM = st.number_input('RAM (GB)', min_value=0, step=1)
+    ROM = st.number_input('ROM (GB)', min_value=0, step=1)
+    Back_Cam = st.number_input('Back Camera (MP)', min_value=0, step=1)
+    Front_Cam = st.number_input('Front Camera (MP)', min_value=0, step=1)
+    Battery = st.number_input('Battery (mAh)', min_value=0, step=100)
+
+    processor_list = [
+        '1.0', '2.0', '4.0', '7.0', '12.0', '13.0', '16.0', '18.0', '20.0',
+        '22.0', '25.0', '35.0', '36.0', '37.0', '60.0', '70.0', '80.0', '81.0',
+        '82.0', '85.0', '88.0', '90.0', '95.0', '96.0', '99.0', '126.0', '208.0',
+        '425.0', '439.0', '450.0', '460.0', '480.0', '606.0', '610.0', '612.0',
+        '616.0', '618.0', '625.0', '626.0', '632.0', '636.0', '660.0', '662.0',
+        '665.0', '675.0', '680.0', '695.0', '700.0', '710.0', '712.0', '720.0',
+        '724.0', '730.0', '732.0', '750.0', '765.0', '778.0', '800.0', '810.0',
+        '820.0', '845.0', '850.0', '855.0', '860.0', '865.0', '870.0', '888.0',
+        '900.0', '920.0', '930.0', '1080.0', '1200.0', '1280.0', '1300.0',
+        '1330.0', '1380.0', '2022.0', '2220.0', '2525.0', '6020.0', '6252.0',
+        '6260.0', '6261.0', '6531.0', '6572.0', '6582.0', '6589.0', '6592.0',
+        '6737.0', '6739.0', '6753.0', '6955.0', '7150.0', '7205.0', '7505.0',
+        '7785.0', '7870.0', '8020.0', '8105.0', '8200.0', '8228.0', '8735.0',
+        '8909.0', '8952.0', '9000.0', '9117.0', '9200.0', '9205.0', '9230.0',
+        '9610.0', '9810.0', '9825.0', '9863.0', '10805.0', '13067.0', '42514.0',
+        '43014.0', '45001.0', '45018.0', '61212.0', '65064.0', '67520.0',
+        '71223.0', '72005.0', '83525.0', '84564.0', '98631.0', '99611.0',
+        '106418.0', '226762.0', '261564.0', '356765.0', '625642.0', '673564.0',
+        '673711.0', '673713.0', '675015.0', '676222.0', '676325.0', '676970.0',
+        '677170.0', '787016.0', '806769.0', '820215.0', '4306414.0',
+        '6806225.0', '6956375.0', '7006833.0', '8102164.0', '8557296.0',
+        '10006889.0', '45045001.0', '67067010.0', '67653512.0', '85053830.0',
+        '87058250.0', '585351330.0', '622568046.0', '986398631.0',
+        '95572645364.0', '9557264536425.0'
+    ]
+
+    Processor = st.selectbox('Processor', processor_list)
+
     Scrap_Date = st.selectbox('Scrap Date', ['2023-06-17', 'other'])
 
     mobile_data = {
@@ -412,7 +441,7 @@ if model == 'Mobile':
             request = requests.post(api, json=mobile_data, timeout=10)
             if request.status_code == 200:
                 result = request.json()
-                st.success(f"Predicted price: {result['predict']}")
+                st.success(f"Predicted price: {result['predicted_price']}")
             else:
                 st.error(f'Error: {request.status_code}')
         except requests.exceptions.RequestException:
