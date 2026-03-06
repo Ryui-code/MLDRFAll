@@ -9,7 +9,7 @@ with st.sidebar:
 
 if model == 'House':
 
-    api = 'http://127.0.0.1:8000/house-model/'
+    api = 'http://127.0.0.1:8000/ru/house/'
 
     st.title('House Model')
 
@@ -53,7 +53,7 @@ if model == 'House':
 
 if model == 'Students':
 
-    api = 'http://127.0.0.1:8000/students-model/'
+    api = 'http://127.0.0.1:8000/ru/students/'
 
     st.title('Student Performance Prediction')
 
@@ -95,7 +95,7 @@ if model == 'Students':
             response = requests.post(api, json=student_dict)
             if response.status_code == 200:
                 result = response.json()
-                st.success(f"Predicted score: {result['predict']}")
+                st.success(f"Predicted score: {result['data']['predict']}")
             else:
                 st.error(f"Error: {response.status_code}")
         except requests.exceptions.RequestException:
@@ -103,7 +103,7 @@ if model == 'Students':
 
 if model == 'Bank':
 
-    api = 'http://127.0.0.1:8000/bank-model/'
+    api = 'http://127.0.0.1:8000/ru/bank/'
 
     st.title('Bank Project')
 
@@ -163,7 +163,7 @@ if model == 'Bank':
 
 if model == 'Diabetes':
 
-    api = 'http://127.0.0.1:8000/diabetes-model/'
+    api = 'http://127.0.0.1:8000/ru/diabetes/'
 
     st.title('Diabetes Model')
 
@@ -207,7 +207,7 @@ if model == 'Diabetes':
 
 if model == 'Avocado':
 
-    api = 'http://127.0.0.1:8000/avocado-model/'
+    api = 'http://127.0.0.1:8000/ru/avocado/'
 
     st.title('Avocado Model')
 
@@ -251,8 +251,8 @@ if model == 'Avocado':
 
 if model == 'Mushrooms':
 
-    api_log = 'http://127.0.0.1:8000/mushrooms-tree/'
-    api_tree = 'http://127.0.0.1:8000/mushrooms-logistic/'
+    api_log = 'http://127.0.0.1:8000/ru/mushrooms-tree/'
+    api_tree = 'http://127.0.0.1:8000/ru/mushrooms-logistic/'
 
     st.title('Mushroom Model')
 
@@ -319,7 +319,7 @@ if model == 'Mushrooms':
 
 if model == 'Telecom':
 
-    api = 'http://127.0.0.1:8000/telecom-model/'
+    api = 'http://127.0.0.1:8000/ru/telecom/'
 
     st.title('Telecom Churn Model')
 
@@ -381,7 +381,7 @@ if model == 'Telecom':
 
 if model == 'Mobile':
 
-    api = 'http://127.0.0.1:8000/mobile-predict/'
+    api = 'http://127.0.0.1:8000/ru/mobile/'
 
     st.title('Mobile Price Prediction')
 
@@ -441,7 +441,7 @@ if model == 'Mobile':
             request = requests.post(api, json=mobile_data, timeout=10)
             if request.status_code == 200:
                 result = request.json()
-                st.success(f"Predicted price: {result['predicted_price']}")
+                st.success(f"Predicted price: {result['data']['predicted_price']}")
             else:
                 st.error(f'Error: {request.status_code}')
         except requests.exceptions.RequestException:
